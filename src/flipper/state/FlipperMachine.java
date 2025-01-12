@@ -45,6 +45,10 @@ public class FlipperMachine {
         return endState;
     }
 
+    public String getCurrentStateName() {
+        return currentState.getClass().getSimpleName();
+    }
+
     //
 
     public int getCredit() {
@@ -85,6 +89,10 @@ public class FlipperMachine {
     }
 
     public void pressStart() {
+        if (credit <= 0) {
+            System.out.println("Nicht genug Kredit, um das Spiel zu starten!");
+            return;
+        }
         currentState.pressStart(this);
     }
 

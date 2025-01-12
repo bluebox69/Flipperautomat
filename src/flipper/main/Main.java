@@ -1,83 +1,131 @@
 package flipper.main;
 
-import flipper.command.MacroCommand;
-import flipper.command.OpenRampCommand;
 import flipper.command.ScoreCommand;
-import flipper.composite.FlipperGroup;
 import flipper.element.Bumper;
 import flipper.element.FlipperElement;
+import flipper.element.Ramp;
 import flipper.element.Target;
+import flipper.mediator.FlipperMediator;
+import flipper.state.FlipperMachine;
+import flipper.state.ReadyState;
+import flipper.utils.GameManager;
 import flipper.factory.FactorySelector;
 import flipper.factory.PoisonFactory;
-import flipper.mediator.FlipperMediator;
-import flipper.mediator.Mediator;
-import flipper.state.FlipperMachine;
-import flipper.utils.GameManager;
-import flipper.visitor.PunkteVisitor;
 import flipper.visitor.ResetVisitor;
 
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
-        // 1. **Factory Setup**: Poison-Stil für ASCII-Ausgaben
-        FactorySelector.setFactory(new PoisonFactory());
-        System.out.println("=== Poison-Stil: Press Start ===");
-        System.out.println(FactorySelector.getFactory().renderPressStart());
-
-        // 2. **State-Pattern Test**
-        System.out.println("\n=== Test: Spielzustände ===");
+        // Setup
         FlipperMachine machine = new FlipperMachine();
-        machine.pressStart(); // Kein Kredit
-        machine.insertCoin(); // Kredit hinzufügen
-        machine.pressStart(); // Spiel starten
-        machine.loseBall();   // Ball verlieren
-        machine.loseBall();   // Ball verlieren
-        machine.loseBall();   // Letzter Ball
-        machine.pressStart(); // Spiel beendet
+        GameManager gameManager = GameManager.getInstance();
+        FactorySelector.setFactory(new PoisonFactory());
 
-        // 3. **Flipper-Elemente und Composite-Pattern**
-        System.out.println("\n=== Test: Flipper-Elemente ===");
-        FlipperElement bumper = new Bumper();
-        FlipperElement target1 = new Target();
-        FlipperElement target2 = new Target();
+        Target target1 = new Target();
+        Target target2 = new Target();
+        Target target3 = new Target();
+        Target[] targets = {target1, target2, target3};
+
+        Ramp ramp = new Ramp();
+        FlipperMediator mediator = new FlipperMediator(targets, ramp);
+
+        for (Target target : targets) {
+            target.setMediator(mediator);
+        }
+
+        Bumper bumper = new Bumper();
         bumper.setCommand(new ScoreCommand(50));
-        target1.setCommand(new ScoreCommand(100));
-        target2.setCommand(new MacroCommand() {{
-            addCommand(new ScoreCommand(150));
-            addCommand(new OpenRampCommand());
-        }});
+        for (Target target : targets) {
+            target.setCommand(new ScoreCommand(100));
+        }
+        ramp.setCommand(new ScoreCommand(500));
 
-        FlipperGroup group = new FlipperGroup();
-        group.add(bumper);
-        group.add(target1);
-        group.add(target2);
+        FlipperGame game = new FlipperGame(machine, bumper, targets, ramp);
 
-        System.out.println("Treffer auf Gruppe:");
-        group.hit(); // Teste Treffer auf die gesamte Gruppe
+        Scanner scanner = new Scanner(System.in);
+        boolean running = true;
 
-        // 4. **Mediator-Pattern Test**
-        System.out.println("\n=== Test: Mediator ===");
-        Mediator mediator = new FlipperMediator();
-        ((Target) target1).setMediator(mediator);
-        ((Target) target2).setMediator(mediator);
-        target1.hit(); // Notify Mediator
-        target2.hit(); // Notify Mediator
+        System.out.println("Willkommen beim Flipper-Spiel!");
+        while (running) {
+            System.out.println("\n=== Hauptmenü ===");
+            switch (machine.getCurrentStateName()) {
+                case "NoCreditState":
+                    System.out.println("1. Münze einwerfen");
+                    System.out.println("2. Status anzeigen");
+                    System.out.println("3. Beenden");
+                    break;
+                case "ReadyState":
+                    System.out.println(FactorySelector.getFactory().renderPressStart());
+                    System.out.println("1. Spiel starten");
+                    System.out.println("2. Status anzeigen");
+                    System.out.println("3. Beenden");
+                    break;
+                case "PlayingState":
+                    System.out.println("1. Kugel schießen");
+                    System.out.println("2. Status anzeigen");
+                    System.out.println("3. Beenden");
+                    break;
+                case "EndState":
+                    System.out.println("1. Neues Spiel starten (Münze einwerfen)");
+                    System.out.println("2. Status anzeigen");
+                    System.out.println("3. Beenden");
+                    break;
+                default:
+                    System.out.println("Ungültiger Zustand.");
+            }
+            System.out.print("Wähle eine Option: ");
 
-        // 5. **Visitor-Pattern Test**
-        System.out.println("\n=== Test: PunkteVisitor ===");
-        PunkteVisitor punkteVisitor = new PunkteVisitor();
-        bumper.accept(punkteVisitor);
-        target1.accept(punkteVisitor);
-        target2.accept(punkteVisitor);
-        System.out.println("Gesamtpunkte durch PunkteVisitor: " + punkteVisitor.getTotalPoints());
+            String input = scanner.nextLine();
+            switch (machine.getCurrentStateName()) {
+                case "NoCreditState":
 
-        System.out.println("\n=== Test: ResetVisitor ===");
-        ResetVisitor resetVisitor = new ResetVisitor();
-        bumper.accept(resetVisitor);
-        target1.accept(resetVisitor);
-        target2.accept(resetVisitor);
+                    if (input.equals("1")) machine.insertCoin();
+                    else if (input.equals("2")) showStatus(machine, gameManager);
+                    else if (input.equals("3")) running = false;
+                    break;
+                case "ReadyState":
 
-        // 6. **Endgültige Punktestand**
-        System.out.println("\nEndgültiger Punktestand: " + GameManager.getInstance().getScore());
+                    if (input.equals("1")) machine.pressStart();
+                    else if (input.equals("2")) showStatus(machine, gameManager);
+                    else if (input.equals("3")) running = false;
+                    break;
+                case "PlayingState":
+                    if (input.equals("1")) game.simulateBallMovement();
+                    else if (input.equals("2")) showStatus(machine, gameManager);
+                    else if (input.equals("3")) running = false;
+                    break;
+                case "EndState":
+                    if (input.equals("1")) {
+                        machine.insertCoin();
+                        ResetVisitor resetVisitor = new ResetVisitor();
+
+                        // Alle Elemente zurücksetzen
+                        bumper.accept(resetVisitor);
+                        for (FlipperElement target : targets) {
+                            target.accept(resetVisitor);
+                        }
+                        ramp.accept(resetVisitor);
+
+                        GameManager.getInstance().resetScore(); // Punkte zurücksetzen
+                        System.out.println("Neues Spiel bereit! Drücke 'Spiel starten'.");
+                        machine.setState(new ReadyState());
+                    } else if (input.equals("2")) {
+                        showStatus(machine, gameManager);
+                    } else if (input.equals("3")) {
+                        running = false;
+                    }
+                    break;
+            }
+        }
+
+        scanner.close();
+    }
+
+    private static void showStatus(FlipperMachine machine, GameManager gameManager) {
+        System.out.println("\n=== Aktueller Status ===");
+        System.out.println("Zustand: " + machine.getCurrentStateName());
+        System.out.println("Kredit: " + machine.getCredit());
+        System.out.println("Punktestand: " + gameManager.getScore());
     }
 }

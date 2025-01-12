@@ -25,4 +25,9 @@ public class GameManager {
     public int getScore() {
         return score;
     }
+
+    public void resetScore() {
+        this.score = 0;
+    }
+
 }
