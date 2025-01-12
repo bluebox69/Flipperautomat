@@ -2,6 +2,7 @@ package flipper.element;
 
 import flipper.command.Command;
 import flipper.composite.FlipperComponent;
+import flipper.visitor.Visitor;
 
 public abstract class FlipperElement implements FlipperComponent {
     private Command command;
@@ -23,4 +24,8 @@ public abstract class FlipperElement implements FlipperComponent {
     }
 
     public abstract String getName();
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
 }

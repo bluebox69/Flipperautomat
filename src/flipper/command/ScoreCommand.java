@@ -14,4 +14,7 @@ public class ScoreCommand implements Command{
         // Punkte können hier z. B. global gespeichert werden.
         GameManager.getInstance().addPoints(points);
     }
+    public int getPoints() {
+        return points; // Getter für Punkte
+    }
 }
