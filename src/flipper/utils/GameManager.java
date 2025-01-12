@@ -16,9 +16,12 @@ public class GameManager {
     }
 
     public void addPoints(int points) {
-        score += points;
+        if (points > 0) {
+            score += points;
+        } else {
+            System.out.println("Punkte müssen positiv sein!");
+        }
     }
-
     public int getScore() {
         return score;
     }

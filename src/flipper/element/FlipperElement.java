@@ -1,8 +1,9 @@
 package flipper.element;
 
 import flipper.command.Command;
+import flipper.composite.FlipperComponent;
 
-public abstract class FlipperElement {
+public abstract class FlipperElement implements FlipperComponent {
     private Command command;
 
     public void setCommand(Command command) {
@@ -15,6 +16,10 @@ public abstract class FlipperElement {
         } else {
             System.out.println("Kein Befehl zugewiesen.");
         }
+    }
+
+    public Command getCommand() {
+        return command;
     }
 
     public abstract String getName();

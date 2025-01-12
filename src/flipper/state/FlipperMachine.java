@@ -58,6 +58,8 @@ public class FlipperMachine {
     public void reduceCredit() {
         if (credit > 0) {
             credit--;
+        } else {
+            System.out.println("Kredit kann nicht negativ sein!");
         }
     }
 
@@ -68,6 +70,8 @@ public class FlipperMachine {
     public void reduceBall() {
         if (ballCount > 0) {
             ballCount--;
+        } else {
+            System.out.println("Keine Bälle mehr vorhanden!");
         }
     }
 
