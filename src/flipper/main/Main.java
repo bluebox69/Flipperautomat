@@ -8,6 +8,7 @@ import flipper.element.Target;
 import flipper.mediator.FlipperMediator;
 import flipper.state.FlipperMachine;
 import flipper.state.ReadyState;
+import flipper.utils.Constants;
 import flipper.utils.GameManager;
 import flipper.factory.FactorySelector;
 import flipper.factory.PoisonFactory;
@@ -35,18 +36,18 @@ public class Main {
         }
 
         Bumper bumper = new Bumper();
-        bumper.setCommand(new ScoreCommand(50));
+        bumper.setCommand(new ScoreCommand(Constants.BUMPER_POINTS));
         for (Target target : targets) {
-            target.setCommand(new ScoreCommand(100));
+            target.setCommand(new ScoreCommand(Constants.TARGET_POINTS));
         }
-        ramp.setCommand(new ScoreCommand(500));
+        ramp.setCommand(new ScoreCommand(Constants.RAMP_POINTS));
 
         FlipperGame game = new FlipperGame(machine, bumper, targets, ramp);
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
 
-        System.out.println("Willkommen beim Flipper-Spiel!");
+        System.out.println(FactorySelector.getFactory().renderWelcome());
         while (running) {
             System.out.println("\n=== Hauptmenü ===");
             switch (machine.getCurrentStateName()) {
@@ -108,6 +109,7 @@ public class Main {
                         ramp.accept(resetVisitor);
 
                         GameManager.getInstance().resetScore(); // Punkte zurücksetzen
+                        machine.resetBallCount(); // Bälle wieder auf 3 zurücksetzen
                         System.out.println("Neues Spiel bereit! Drücke 'Spiel starten'.");
                         machine.setState(new ReadyState());
                     } else if (input.equals("2")) {

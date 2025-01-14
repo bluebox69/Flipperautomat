@@ -5,19 +5,22 @@ import flipper.composite.FlipperComponent;
 import flipper.visitor.Visitor;
 
 public abstract class FlipperElement implements FlipperComponent {
+    private boolean hit = false;
     private Command command;
 
     public void setCommand(Command command) {
         this.command = command;
     }
 
-    public void hit() {
-        if (command != null) {
-            command.execute();
-        } else {
-            System.out.println("Kein Befehl zugewiesen.");
-        }
+    public abstract void hit();
+
+    public boolean isHit() {
+        return hit;
     }
+    public void setHit(boolean hit) {
+        this.hit = hit;
+    }
+
 
     public Command getCommand() {
         return command;

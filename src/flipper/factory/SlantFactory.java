@@ -62,4 +62,15 @@ public class SlantFactory implements AsciiArtFactory{
         }
         return "Keine Darstellung für diese Ballnummer.";
     }
+
+    @Override
+    public String renderWelcome() {
+        return "\n" +
+                "           ______    __    _                                        \n" +
+                "          / ____/   / /   (_)    ____     ____   ___    _____       \n" +
+                "         / /_      / /   / /    / __ \\   / __ \\ / _ \\  / ___/       \n" +
+                "        / __/     / /   / /    / /_/ /  / /_/ //  __/ / /           \n" +
+                " ______/_/       /_/   /_/    / .___/  / .___/ \\___/ /_/      ______\n" +
+                "/_____/                      /_/      /_/                    /_____/\n";
+    }
 }

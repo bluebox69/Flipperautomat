@@ -21,23 +21,22 @@ public class Ramp extends FlipperElement {
         }
     }
 
-    public void reset() {
-        open = false; // Schließe die Rampe
-        System.out.println("Rampe zurückgesetzt.");
-    }
-
-
     @Override
     public void hit() {
-        if (open) {
+        if (isOpen() && !isHit()) { // Treffer nur, wenn Rampe offen und nicht getroffen
+            setHit(true);
             System.out.println("Rampe getroffen! Jackpot!");
-            if (getCommand() != null) {
-                getCommand().execute();
-            }
             close(); // Rampe schließt sich nach Treffer
+        } else if (!isOpen()) {
+            System.out.println("Rampe ist geschlossen.");
         } else {
-            System.out.println("Rampe ist geschlossen. Kein Treffer möglich.");
+            System.out.println("Rampe wurde bereits getroffen.");
         }
+    }
+    public void reset() {
+        setHit(false); // Trefferstatus zurücksetzen
+        close();       // Rampe schließen
+        System.out.println("Ramp zurückgesetzt.");
     }
 
     @Override

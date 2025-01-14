@@ -16,6 +16,8 @@ public class GameManager {
     }
 
     public void addPoints(int points) {
+        //System.out.println("Punkte werden hinzugefügt: " + points);
+
         if (points > 0) {
             score += points;
         } else {
@@ -28,6 +30,7 @@ public class GameManager {
 
     public void resetScore() {
         this.score = 0;
+        System.out.println("Punkte zurückgesetzt.");
     }
 
 }

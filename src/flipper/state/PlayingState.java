@@ -17,8 +17,10 @@ public class PlayingState implements FlipperState{
         machine.reduceBall();
         if (machine.getBallCount() > 0) {
             System.out.println("Ball verloren. Noch " + machine.getBallCount() + " Bälle übrig.");
+            System.out.println("___________");
         } else {
             System.out.println("Alle Bälle verloren. Spiel beendet!");
+            System.out.println("___________");
             machine.setState(machine.getEndState());
         }
     }

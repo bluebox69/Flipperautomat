@@ -2,22 +2,28 @@ package flipper.visitor;
 
 import flipper.command.Command;
 import flipper.command.ScoreCommand;
+import flipper.element.Bumper;
 import flipper.element.FlipperElement;
+import flipper.utils.Constants;
+import flipper.utils.GameManager;
 
 public class PunkteVisitor implements Visitor {
-    private int totalPoints = 0;
 
     @Override
     public void visit(FlipperElement element) {
-        // Punkte werden auf Basis der Eigenschaften des Elements berechnet
-        Command command = element.getCommand();
-        if (command instanceof ScoreCommand) {
-            int points = ((ScoreCommand) command).getPoints();
-            totalPoints += points; // Summiere Punkte
+        if (element instanceof Bumper) {
+            // Sonderfall: Punkte basieren auf Trefferanzahl
+            Bumper bumper = (Bumper) element;
+            int points = bumper.getHitCount() * Constants.BUMPER_POINTS; // Beispiel: 50 Punkte pro Treffer
+            GameManager.getInstance().addPoints(points);
+            System.out.println(bumper.getName() + " hat Punkte hinzugefügt: " + points);
+        } else if (element.isHit()) { // Punkte nur zählen, wenn das Element getroffen wurde
+            Command command = element.getCommand();
+            if (command instanceof ScoreCommand) {
+                int points = ((ScoreCommand) command).getPoints();
+                GameManager.getInstance().addPoints(points);
+                System.out.println(element.getName() + " hat Punkte hinzugefügt: " + points);
+            }
         }
-    }
-
-    public int getTotalPoints() {
-        return totalPoints;
     }
 }
