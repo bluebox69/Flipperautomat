@@ -9,13 +9,13 @@ Ein konsolenbasierter Flipperautomaten-Simulator, der mithilfe gängiger Softwar
 
 Dieses Programm simuliert den Ablauf eines Flipperautomaten, bei dem der Spieler:
 
-    ->Kredit hinzufügen und das Spiel starten kann.
+    -> Kredit hinzufügen und das Spiel starten kann.
 
-    ->Mehrere Bälle durch verschiedene Flipperelemente wie Bumper, Targets und Rampen schießen kann.
+    -> Mehrere Bälle durch verschiedene Flipperelemente wie Bumper, Targets und Rampen schießen kann.
 
-    ->Zusätzliche Boni wie einen Extra Ball erhalten kann.
+    -> Zusätzliche Boni wie einen Extra Ball erhalten kann.
 
-    ->Punkte sammelt, die am Ende jeder Runde zusammengezählt und angezeigt werden.
+    -> Punkte sammelt, die am Ende jeder Runde zusammengezählt und angezeigt werden.
     
 Verwendete Entwurfsmuster
 
@@ -33,21 +33,25 @@ Verwendete Entwurfsmuster
 
     Die Zustandswechsel werden durch die Klasse FlipperMachine verwaltet.
 
+
 2. Command-Pattern
 
     Befehle steuern Aktionen wie das Hinzufügen von Punkten (ScoreCommand) oder das Öffnen der Rampe (OpenRampCommand).
 
     Das Command-Pattern ermöglicht eine entkoppelte Steuerung von Aktionen.
 
+
 3. Composite-Pattern
 
     Targets und andere Flipperelemente sind in einer FlipperGroup organisiert, die die Verwaltung und Interaktion mit mehreren Elementen vereinfacht.
+
 
 4. Visitor-Pattern
 
     Der PunkteVisitor berechnet die Punkte basierend auf den getroffenen Elementen.
 
     Der ResetVisitor setzt den Zustand aller Elemente am Spielende oder bei einem Neustart zurück.
+
 
 5. Mediator-Pattern
 
@@ -57,6 +61,7 @@ Verwendete Entwurfsmuster
 
     Synchronisiert Aktionen zwischen Elementen.
 
+
 6. Abstract Factory
 
     ASCII-Output für verschiedene Anzeigen:
@@ -64,6 +69,7 @@ Verwendete Entwurfsmuster
     SlantFactory: Für Ballnummern.
 
     PoisonFactory: Für spezielle Meldungen wie "Start Game" und "Game Over".
+
 
 7. Singleton-Pattern
 
