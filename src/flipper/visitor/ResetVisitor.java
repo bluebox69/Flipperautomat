@@ -1,11 +1,16 @@
 package flipper.visitor;
 
-import flipper.element.Bumper;
-import flipper.element.FlipperElement;
-import flipper.element.Ramp;
-import flipper.element.Target;
+import flipper.composite.FlipperGroup;
+import flipper.element.*;
 
 public class ResetVisitor implements Visitor {
+
+    private final FlipperGroup targetGroup;
+
+    public ResetVisitor(FlipperGroup targetGroup) {
+        this.targetGroup = targetGroup;
+    }
+
     @Override
     public void visit(FlipperElement element) {
         System.out.println("Setze " + element.getName() + " zurück.");
@@ -13,7 +18,15 @@ public class ResetVisitor implements Visitor {
         if (element instanceof Bumper) {
             ((Bumper) element).reset(); // HitCount zurücksetzen
         } else if (element instanceof flipper.element.Ramp) {
-            ((flipper.element.Ramp) element).close(); // Rampe schließen
+            ((flipper.element.Ramp) element).reset(); // Rampe schließen
+        } else if (element instanceof ExtraBall) {
+            ((ExtraBall) element).reset(); // Extra Ball zurücksetzen
+            System.out.println("Extra Ball wurde zurückgesetzt.");
+
+        } else if (targetGroup != null) {
+            targetGroup.setBonusActive(false);
+            System.out.println("Bonusmodus für Bumper wurde zurückgesetzt.");
         }
     }
+
 }

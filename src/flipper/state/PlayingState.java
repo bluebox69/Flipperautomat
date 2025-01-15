@@ -1,6 +1,6 @@
 package flipper.state;
 
-public class PlayingState implements FlipperState{
+public class PlayingState implements FlipperState {
     @Override
     public void insertCoin(FlipperMachine machine) {
         System.out.println("Spiel läuft bereits. Kredit wird hinzugefügt.");

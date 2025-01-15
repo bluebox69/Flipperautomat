@@ -1,6 +1,6 @@
 package flipper.factory;
 
-public class SlantFactory implements AsciiArtFactory{
+public class SlantFactory implements AsciiArtFactory {
     @Override
     public String renderPressStart() {
         return "\n" +

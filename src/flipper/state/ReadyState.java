@@ -1,6 +1,6 @@
 package flipper.state;
 
-public class ReadyState implements FlipperState{
+public class ReadyState implements FlipperState {
     @Override
     public void insertCoin(FlipperMachine machine) {
         System.out.println("Münze eingeworfen. Kredit erhöht!");

@@ -1,10 +1,13 @@
 package flipper.composite;
 
+import flipper.element.FlipperElement;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class FlipperGroup implements FlipperComponent {
     private List<FlipperComponent> components = new ArrayList<>();
+    private boolean bonusActive = false;
 
     public void add(FlipperComponent component) {
         if (component == this || isCyclic(component)) {
@@ -14,8 +17,14 @@ public class FlipperGroup implements FlipperComponent {
         components.add(component);
     }
 
-    public void remove(FlipperComponent component) {
-        components.remove(component);
+    public boolean allHit() {
+        return components.stream()
+                .filter(component -> component instanceof FlipperElement)
+                .allMatch(component -> ((FlipperElement) component).isHit());
+    }
+
+    public List<FlipperComponent> getTargets() {
+        return components;
     }
 
     private boolean isCyclic(FlipperComponent component) {
@@ -36,4 +45,21 @@ public class FlipperGroup implements FlipperComponent {
             component.hit();
         }
     }
+
+    public void checkAndActivateBonus() {
+        if (allHit() && !bonusActive) {
+            bonusActive = true;
+            System.out.println("Bonusmodus für Bumper aktiviert!");
+        }
+    }
+
+    public boolean isBonusActive() {
+        return bonusActive;
+    }
+
+    public void setBonusActive(boolean bonusActive) {
+        this.bonusActive = bonusActive;
+    }
+
+
 }

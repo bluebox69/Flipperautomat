@@ -17,6 +17,7 @@ public abstract class FlipperElement implements FlipperComponent {
     public boolean isHit() {
         return hit;
     }
+
     public void setHit(boolean hit) {
         this.hit = hit;
     }

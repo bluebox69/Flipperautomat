@@ -1,10 +1,8 @@
 package flipper.main;
 
 import flipper.command.ScoreCommand;
-import flipper.element.Bumper;
-import flipper.element.FlipperElement;
-import flipper.element.Ramp;
-import flipper.element.Target;
+import flipper.composite.FlipperGroup;
+import flipper.element.*;
 import flipper.mediator.FlipperMediator;
 import flipper.state.FlipperMachine;
 import flipper.state.ReadyState;
@@ -22,27 +20,32 @@ public class Main {
         FlipperMachine machine = new FlipperMachine();
         GameManager gameManager = GameManager.getInstance();
         FactorySelector.setFactory(new PoisonFactory());
+        ExtraBall extraBall = new ExtraBall();
 
         Target target1 = new Target();
         Target target2 = new Target();
         Target target3 = new Target();
         Target[] targets = {target1, target2, target3};
 
+        FlipperGroup targetGroup = new FlipperGroup();
+        for (Target target : targets) {
+            targetGroup.add(target);
+        }
+
         Ramp ramp = new Ramp();
-        FlipperMediator mediator = new FlipperMediator(targets, ramp);
+        FlipperMediator mediator = new FlipperMediator(targetGroup, ramp);
 
         for (Target target : targets) {
             target.setMediator(mediator);
+            target.setCommand(new ScoreCommand(Constants.TARGET_POINTS));
         }
 
         Bumper bumper = new Bumper();
         bumper.setCommand(new ScoreCommand(Constants.BUMPER_POINTS));
-        for (Target target : targets) {
-            target.setCommand(new ScoreCommand(Constants.TARGET_POINTS));
-        }
+
         ramp.setCommand(new ScoreCommand(Constants.RAMP_POINTS));
 
-        FlipperGame game = new FlipperGame(machine, bumper, targets, ramp);
+        FlipperGame game = new FlipperGame(machine, bumper, targets, ramp, targetGroup, extraBall);
 
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
@@ -81,46 +84,52 @@ public class Main {
             switch (machine.getCurrentStateName()) {
                 case "NoCreditState":
 
-                    if (input.equals("1")) machine.insertCoin();
-                    else if (input.equals("2")) showStatus(machine, gameManager);
-                    else if (input.equals("3")) running = false;
+                    switch (input) {
+                        case "1" -> machine.insertCoin();
+                        case "2" -> showStatus(machine, gameManager);
+                        case "3" -> running = false;
+                    }
                     break;
                 case "ReadyState":
 
-                    if (input.equals("1")) machine.pressStart();
-                    else if (input.equals("2")) showStatus(machine, gameManager);
-                    else if (input.equals("3")) running = false;
+                    switch (input) {
+                        case "1" -> machine.pressStart();
+                        case "2" -> showStatus(machine, gameManager);
+                        case "3" -> running = false;
+                    }
                     break;
                 case "PlayingState":
-                    if (input.equals("1")) game.simulateBallMovement();
-                    else if (input.equals("2")) showStatus(machine, gameManager);
-                    else if (input.equals("3")) running = false;
+                    switch (input) {
+                        case "1" -> game.simulateBallMovement();
+                        case "2" -> showStatus(machine, gameManager);
+                        case "3" -> running = false;
+                    }
                     break;
                 case "EndState":
-                    if (input.equals("1")) {
-                        machine.insertCoin();
-                        ResetVisitor resetVisitor = new ResetVisitor();
+                    switch (input) {
+                        case "1" -> {
+                            machine.insertCoin();
+                            ResetVisitor resetVisitor = new ResetVisitor(targetGroup);
 
-                        // Alle Elemente zurücksetzen
-                        bumper.accept(resetVisitor);
-                        for (FlipperElement target : targets) {
-                            target.accept(resetVisitor);
+                            // Alle Elemente zurücksetzen
+                            bumper.accept(resetVisitor);
+                            for (FlipperElement target : targets) {
+                                target.accept(resetVisitor);
+                            }
+                            ramp.accept(resetVisitor);
+                            extraBall.accept(resetVisitor);
+                            GameManager.getInstance().resetScore();
+                            machine.resetBallCount();
+
+                            System.out.println("Neues Spiel bereit! Drücke 'Spiel starten'.");
+                            machine.setState(new ReadyState());
                         }
-                        ramp.accept(resetVisitor);
-
-                        GameManager.getInstance().resetScore(); // Punkte zurücksetzen
-                        machine.resetBallCount(); // Bälle wieder auf 3 zurücksetzen
-                        System.out.println("Neues Spiel bereit! Drücke 'Spiel starten'.");
-                        machine.setState(new ReadyState());
-                    } else if (input.equals("2")) {
-                        showStatus(machine, gameManager);
-                    } else if (input.equals("3")) {
-                        running = false;
+                        case "2" -> showStatus(machine, gameManager);
+                        case "3" -> running = false;
                     }
                     break;
             }
         }
-
         scanner.close();
     }
 

@@ -8,7 +8,6 @@ public class FlipperMachine {
     private int ballCount = 3;
 
     //all states
-    // States
     private final FlipperState noCreditState;
     private final FlipperState readyState;
     private final FlipperState playingState;
@@ -77,6 +76,10 @@ public class FlipperMachine {
         } else {
             System.out.println("Keine Bälle mehr vorhanden!");
         }
+    }
+
+    public void addBall() {
+        ballCount++;
     }
 
     public void resetBallCount() {

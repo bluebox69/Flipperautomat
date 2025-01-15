@@ -4,13 +4,12 @@ public class Ramp extends FlipperElement {
     private boolean open = false; // Initialzustand: geschlossen
 
     public boolean isOpen() {
-        return open; // Gibt zurück, ob die Rampe offen ist
+        return open;
     }
 
     public void open() {
         if (!open) {
             open = true;
-            System.out.println("Rampe geöffnet!");
         }
     }
 
@@ -23,19 +22,19 @@ public class Ramp extends FlipperElement {
 
     @Override
     public void hit() {
-        if (isOpen() && !isHit()) { // Treffer nur, wenn Rampe offen und nicht getroffen
+        if (isOpen() && !isHit()) {
             setHit(true);
             System.out.println("Rampe getroffen! Jackpot!");
-            close(); // Rampe schließt sich nach Treffer
         } else if (!isOpen()) {
             System.out.println("Rampe ist geschlossen.");
         } else {
             System.out.println("Rampe wurde bereits getroffen.");
         }
     }
+
     public void reset() {
-        setHit(false); // Trefferstatus zurücksetzen
-        close();       // Rampe schließen
+        setHit(false);
+        close();
         System.out.println("Ramp zurückgesetzt.");
     }
 

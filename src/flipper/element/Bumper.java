@@ -2,21 +2,21 @@ package flipper.element;
 
 import flipper.composite.FlipperComponent;
 
-public class Bumper extends  FlipperElement implements FlipperComponent {
+public class Bumper extends FlipperElement implements FlipperComponent {
     private int hitCount = 0;
 
     @Override
     public void hit() {
-        hitCount++; // Erhöhe die Trefferanzahl
+        hitCount++;
         System.out.println("Bumper getroffen! Trefferanzahl: " + hitCount);
     }
 
     public int getHitCount() {
-        return hitCount; // Gibt die Trefferanzahl zurück
+        return hitCount;
     }
 
     public void reset() {
-        hitCount = 0; // Setzt die Trefferanzahl zurück
+        hitCount = 0;
     }
 
     @Override

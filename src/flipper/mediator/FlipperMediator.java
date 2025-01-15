@@ -1,31 +1,28 @@
 package flipper.mediator;
 
+import flipper.command.OpenRampCommand;
 import flipper.composite.FlipperGroup;
 import flipper.element.Ramp;
 import flipper.element.Target;
 
-public class FlipperMediator implements Mediator{
-    private Target[] targets;
-    private Ramp ramp;
+public class FlipperMediator implements Mediator {
 
-    public FlipperMediator(Target[] targets, Ramp ramp) {
-        this.targets = targets;
-        this.ramp = ramp;
+    private FlipperGroup targetGroup;
+    private OpenRampCommand openRampCommand;
+
+    public FlipperMediator(FlipperGroup targetGroup, Ramp ramp) {
+        this.targetGroup = targetGroup;
+        this.openRampCommand = new OpenRampCommand(ramp);
     }
+
     @Override
     public void notify(Object sender, String event) {
-        if (sender instanceof Target && event.equals("TargetHit")) {
-            boolean allHit = true;
-            for (Target target : targets) {
-                if (!target.isHit()) {
-                    allHit = false;
-                    break;
-                }
-            }
-            if (allHit) {
-                System.out.println("Alle Targets wurden getroffen. Rampe wird geöffnet!");
-                ramp.open();
-            }
+        if (event.equals("TargetHit") && targetGroup.allHit() && !openRampCommand.isExecuted()) {
+            System.out.println("Alle Targets in der Gruppe wurden getroffen. Rampe wird geöffnet!");
+            openRampCommand.execute();
+            targetGroup.setBonusActive(true);
+            System.out.println("Bonusmodus für Bumper aktiviert!");
+
         }
     }
 

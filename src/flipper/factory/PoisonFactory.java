@@ -1,6 +1,6 @@
 package flipper.factory;
 
-public class PoisonFactory implements AsciiArtFactory{
+public class PoisonFactory implements AsciiArtFactory {
     @Override
     public String renderPressStart() {
         return "\n" +
